@@ -49,8 +49,11 @@ class Server
     def ber_read(io)
       blk = io.read(2)		# minimum: short tag, short length
       throw(:close) if blk.nil?
-      tag = blk[0] & 0x1f
-      len = blk[1]
+
+      codepoints = blk.respond_to?(:codepoints) ? blk.codepoints.to_a : blk
+
+      tag = codepoints[0] & 0x1f
+      len = codepoints[1]
 
       if tag == 0x1f		# long form
         tag = 0
